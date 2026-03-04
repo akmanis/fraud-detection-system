@@ -2,9 +2,9 @@ import streamlit as st
 import pickle
 import numpy as np
 import pandas as pd
-
+import joblib
+model = joblib.load("fraud_model.pkl")
 # Load trained model
-model = pickle.load(open("fraud_model.pkl","rb"))
 # Page title
 st.title("Credit Card Fraud Detection System")
 st.subheader("Machine Learning Powered Fraud Monitoring")
