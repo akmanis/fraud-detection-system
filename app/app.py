@@ -4,6 +4,7 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import networkx as nx
 
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 
@@ -87,18 +88,24 @@ if st.button("Generate Transactions"):
         else:
             risk_level = "High"
 
+        # Random geographic locations
+        lat = np.random.uniform(-60, 60)
+        lon = np.random.uniform(-180, 180)
+
         results.append({
             "Transaction Amount": round(amt, 2),
             "Fraud Probability": round(prob, 4),
             "Risk Score": risk_score,
             "Risk Level": risk_level,
-            "Fraud": prob > threshold
+            "Fraud": prob > threshold,
+            "lat": lat,
+            "lon": lon
         })
 
     df = pd.DataFrame(results)
 
     # -----------------------------
-    # Table
+    # Transaction Table
     # -----------------------------
     st.subheader("Transaction Table")
     st.dataframe(df)
@@ -117,7 +124,7 @@ if st.button("Generate Transactions"):
     st.bar_chart(df["Fraud"].value_counts())
 
     # -----------------------------
-    # Probability Distribution
+    # Fraud Probability Distribution
     # -----------------------------
     st.subheader("Fraud Probability Distribution")
     st.bar_chart(df["Fraud Probability"])
@@ -141,7 +148,7 @@ if st.button("Generate Transactions"):
         st.write("No high risk transactions detected.")
 
     # -----------------------------
-    # Fraud Alert System
+    # Fraud Alerts
     # -----------------------------
     st.subheader("Real-Time Fraud Alerts")
 
@@ -154,6 +161,56 @@ if st.button("Generate Transactions"):
         st.warning("⚠️ Some suspicious transactions detected")
     else:
         st.success("System Status: Normal")
+
+    # -----------------------------
+    # Fraud Heatmap 
+    # -----------------------------
+    st.subheader("Fraud Geographic Heatmap")
+
+    fraud_locations = df[df["Fraud"] == True][["lat","lon"]]
+
+    if len(fraud_locations) > 0:
+        st.map(fraud_locations)
+    else:
+        st.write("No fraud locations detected.")
+
+    # -----------------------------
+# Transaction Network Graph
+# -----------------------------
+st.subheader("Transaction Network Graph (Fraud Ring Detection)")
+
+G = nx.Graph()
+
+accounts = [f"A{i}" for i in range(10)]
+merchants = [f"M{i}" for i in range(5)]
+
+edges = []
+
+for i in range(30):
+
+    acc = np.random.choice(accounts)
+    mer = np.random.choice(merchants)
+
+    edges.append((acc, mer))
+
+    G.add_edge(acc, mer)
+
+fig3, ax3 = plt.subplots()
+
+pos = nx.spring_layout(G)
+
+nx.draw(
+    G,
+    pos,
+    with_labels=True,
+    node_color="lightblue",
+    edge_color="gray",
+    node_size=1500,
+    font_size=8,
+    ax=ax3
+)
+
+st.pyplot(fig3)
 
     # -----------------------------
     # Confusion Matrix
