@@ -42,7 +42,18 @@ if st.button("Check Transaction"):
 
     probability = model.predict_proba(features)[0][1]
 
+    risk_score = int(probability * 100)
+
+    if risk_score < 30:
+        risk_level = "Low"
+    elif risk_score < 70:
+        risk_level = "Medium"
+    else:
+        risk_level = "High"
+
     st.write("Fraud Probability:", round(probability * 100, 2), "%")
+    st.write("Risk Score:", risk_score)
+    st.write("Risk Level:", risk_level)
 
     if probability > threshold:
         st.error("Fraudulent Transaction Detected")
@@ -67,9 +78,20 @@ if st.button("Generate Transactions"):
 
         prob = model.predict_proba(features)[0][1]
 
+        risk_score = int(prob * 100)
+
+        if risk_score < 30:
+            risk_level = "Low"
+        elif risk_score < 70:
+            risk_level = "Medium"
+        else:
+            risk_level = "High"
+
         results.append({
             "Transaction Amount": round(amt, 2),
             "Fraud Probability": round(prob, 4),
+            "Risk Score": risk_score,
+            "Risk Level": risk_level,
             "Fraud": prob > threshold
         })
 
@@ -101,11 +123,17 @@ if st.button("Generate Transactions"):
     st.bar_chart(df["Fraud Probability"])
 
     # -----------------------------
+    # Risk Level Distribution
+    # -----------------------------
+    st.subheader("Risk Level Distribution")
+    st.bar_chart(df["Risk Level"].value_counts())
+
+    # -----------------------------
     # High Risk Transactions
     # -----------------------------
     st.subheader("High Risk Transactions")
 
-    high_risk = df[df["Fraud Probability"] > threshold]
+    high_risk = df[df["Risk Level"] == "High"]
 
     if len(high_risk) > 0:
         st.dataframe(high_risk)
@@ -115,14 +143,15 @@ if st.button("Generate Transactions"):
     # -----------------------------
     # Fraud Alert System
     # -----------------------------
-    st.subheader("Fraud Alert System")
+    st.subheader("Real-Time Fraud Alerts")
 
     fraud_count = df["Fraud"].sum()
+    high_risk_count = len(high_risk)
 
-    if fraud_count > 10:
-        st.error("ALERT: High number of suspicious transactions detected!")
+    if high_risk_count > 5:
+        st.error("⚠️ ALERT: Multiple high risk transactions detected!")
     elif fraud_count > 0:
-        st.warning("Warning: Some suspicious transactions detected")
+        st.warning("⚠️ Some suspicious transactions detected")
     else:
         st.success("System Status: Normal")
 
@@ -157,7 +186,7 @@ if st.button("Generate Transactions"):
 
     fig2, ax2 = plt.subplots()
 
-    ax2.plot(fpr, tpr, label=f"ROC Curve (AUC = {roc_auc:.2f}")
+    ax2.plot(fpr, tpr, label=f"ROC Curve (AUC = {roc_auc:.2f})")
     ax2.plot([0,1],[0,1],'--')
 
     ax2.set_xlabel("False Positive Rate")
