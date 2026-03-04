@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 # Load trained model
-model = pickle.load(open("models/fraud_model.pkl", "rb"))
+model = pickle.load(open("fraud_model.pkl", "rb"))
 
 # Page title
 st.title("Credit Card Fraud Detection System")
