@@ -2,6 +2,6 @@ streamlit
 numpy
 pandas
 scikit-learn
-imbalanced-learn
+matplotlib
+seaborn
 joblib
-
