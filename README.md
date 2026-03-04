@@ -194,14 +194,8 @@ fraud-detection-system
 │    └── app.py
 ├── fraud_model.pkl
 ├── requirements.txt
-├── README.md
-│
-└── screenshots
-    ├── dashboard.png
-    ├── transactions.png
-    ├── heatmap.png
-    ├── roc_confusion.png
-    └── network.png
+└── README.md
+
 ```
 
 ---
