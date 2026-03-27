@@ -13,6 +13,11 @@ from sklearn.metrics import confusion_matrix, roc_curve, auc
 # -----------------------------
 model = joblib.load("fraud_model.pkl")
 
+st.set_page_config(
+    page_title="Fraud Detection System", 
+    layout="wide"
+)
+
 # -----------------------------
 # Page Title
 # -----------------------------
